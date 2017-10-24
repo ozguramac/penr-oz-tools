@@ -5,6 +5,9 @@ This README is for penr-oz-tools where we have setup some simple tools for deali
 ### What is this repository for? ###
 
 * Quick summary: Tools for dealing with cyrptographic features
+  - Tool for creating deterministicly hashed passwords
+  - Tools for approximating original data by using [Matching Pursuit Algorithm](https://en.wikipedia.org/wiki/Matching_pursuit)
+
 * Version: 0.01
 
 ## Download and Installation

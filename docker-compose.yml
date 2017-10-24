@@ -4,5 +4,9 @@ services:
     pswdgen:
         container_name: pswdgen
         build: ./pswdgen
-        JAVA_OPTS: -Xmx256m -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8181,suspend=n
+        entrypoint: java -Xmx256m -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8181,suspend=n -jar /app.jar
 
+    mproximate:
+        container_name: mproximate
+        build: ./mproximate
+        entrypoint: java -Xmx256m -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8181,suspend=n -jar /app.jar
