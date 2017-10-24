@@ -33,4 +33,4 @@ To begin development on this site:
 
 ## Copyright and License
 
-Copyright 2017 Derin Works LLC.
+Copyright 2017 [Derin Works LLC](http://www.derinworksllc.com)
