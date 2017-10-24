@@ -1,0 +1,87 @@
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+ext.versionFile = file('version.properties')
+
+task loadVersion {
+    def baseVersion = readVersion()
+    allprojects {
+        version = baseVersion
+    }
+}
+
+ProjectVersion readVersion() {
+    logger.quiet 'Reading the version file.'
+
+    if (!versionFile.exists()) {
+        throw new GradleException("Required version file does not exit: $versionFile.canonicalPath")
+    }
+
+    Properties versionProps = new Properties()
+
+    versionFile.withInputStream { stream ->
+        versionProps.load(stream)
+    }
+
+    new ProjectVersion(versionProps.major.toInteger(), versionProps.minor.toInteger(), versionProps.patch.toInteger(), versionProps.release.toBoolean())
+}
+
+task makeReleaseVersion(group: 'versioning', description: 'Makes project a release version.') << {
+    version.release = true
+    ant.propertyfile(file: versionFile) {
+        entry(key: 'release', type: 'string', operation: '=', value: 'true')
+    }
+}
+
+tasks.addRule("Pattern: increment<Classifier>Version – Increments the project version classifier.") { String taskName ->
+    if (taskName.startsWith('increment') && taskName.endsWith('Version')) {
+        task(taskName) << {
+            String classifier = (taskName - 'increment' - 'Version').toLowerCase()
+            String currentVersion = version.toString()
+
+            switch (classifier) {
+                case 'major': ++version.major
+                    break
+                case 'minor': ++version.minor
+                    break
+                case 'patch': ++version.patch
+                    break
+                default: throw new GradleException("Invalid version type '$classifier. Allowed types: ['Major', 'Minor', 'Patch']")
+            }
+
+            String newVersion = version.toString()
+            logger.info "Incrementing $classifier project version: $currentVersion -> $newVersion"
+
+            ant.propertyfile(file: versionFile) {
+                entry(key: classifier, type: 'int', operation: '+', value: 1)
+            }
+        }
+    }
+}
+
+class ProjectVersion {
+    Integer major
+    Integer minor
+    Integer patch
+    Boolean release
+
+    ProjectVersion(Integer major, Integer minor, Integer patch) {
+        this.major = major
+        this.minor = minor
+        this.patch = patch
+        this.release = Boolean.FALSE
+    }
+
+    ProjectVersion(Integer major, Integer minor, Integer patch, Boolean release) {
+        this(major, minor, patch)
+        this.release = release
+    }
+
+    @Override
+    String toString() {
+        "$major.$minor.$patch${release ? '' : '-SNAPSHOT'}"
+    }
+}

@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+    pswdgen:
+        container_name: pswdgen
+        build: ./pswdgen
+        JAVA_OPTS: -Xmx256m -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8181,suspend=n
+

@@ -1,0 +1,4 @@
+rootProject.name = 'penr-oz-tools'
+include 'pswdgen'
+
+
